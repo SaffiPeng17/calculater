@@ -4,3 +4,5 @@
 
 *A simple calculator for practicing React-Native.*
 
+And the practiced notes is here: [React-Native Notes](https://saffipeng17.gitbooks.io/react-native-notes/content/).
+
