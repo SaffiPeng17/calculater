@@ -1,6 +1,6 @@
 # Calculater
 
-*This is the first React-Native project to me. A simple calculator for practicing React-Native.*
+*This is the first React-Native project to me. A simple calculator for learning React-Native.*
 
-*And the practiced notes is here: [React-Native Notes](https://saffipeng17.gitbooks.io/react-native-notes/content/).*
+*And the learning note is here: [React-Native Notes](https://saffipeng17.gitbooks.io/react-native-notes/content/).*
 
