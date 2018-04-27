@@ -1,5 +1,5 @@
 /**
- * Sample React Native App
+ * First Page of React Native App
  * https://github.com/facebook/react-native
  * @flow
  */
@@ -16,62 +16,122 @@ import {
 
 import Button from 'apsl-react-native-button';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+export default class App extends Component {
 
-type Props = {};
-export default class App extends Component<Props> {
-
-  //Init
-  constructor(props, context) {
-    super(props, context);
+  constructor(props) {
+    super(props);
 
     this.state = {
-      input: '',
+      formulaarray: [],
+      countnumber: '0',
+
+      disptext: '0',
+      realnumber: 0,
+      result: 0,
     }
   }
 
-  _handlePress() {
+  onPressed(input) {
     console.log('Pressed!');
+    //
+    // if(typeof input == "number") {
+    //   countnumber = countnumber+String(input);
+    // } else {
+    //   realnumber = parseInt(countnumber, 10);
+    //   countnumber = '0';
+    // }
+    var newText = this.state.countnumber;
+    if(newText == '0') {
+      newText = input;
+    } else {
+      newText = newText+input;
+    }
+
+    // switch (input) {
+    //   case '=':
+    //     var sum = 0;
+    //     for(var i = 0; i<=formulaarray.length; i++) {
+    //       if(i%2! != 0) {
+    //
+    //       }
+    //       let number = Number(formulaarray[i]);
+    //       sum = sum+number;
+    //     }
+    //     break;
+    //   case '+', '-', '*', '/':
+    //     formulaarray.push(countnumber);
+    //     formulaarray.push(input);
+    //     countnumber = '0';
+    //     break;
+    //   default: //numbers
+    //
+    //     break;
+    // }
+    //
+    // var newText = this.state.formulaarray.toString();
+    // // newText = (newText == '0') ? input : newText+input;
+    this.setState({countnumber: newText, disptext: newText});
   }
 
-  onButtonPressed() {
-    console.log("onButtonPressed");
-  //   const { input } = this.state;
-  //
-  //   if(!input) {
-  //     return;
-  //   }
-  //
-  //   if(navigator) {
-  //     navigator.push({
-  //       name: 'GuestSiteScene',
-  //       component: GuestSiteScene,
-  //       params: {
-  //         password: password
-  //       }
-  //     })
-  //   }
-  }
+  onPlusPressed() {
+    //計算更新
+    let number = Number(this.state.countnumber);
+    let sum = this.state.result+number;
+    this.setState({result: sum});
+    //顯示更新
+    var newText = this.state.disptext+'+';
+    this.setState({countnumber: '0', disptext: newText});
 
+    // formulaarray.push(countnumber);
+    // formulaarray.push(input);
+    // countnumber = '0';
+  }
+  onMinusPressed() {
+
+  }
+  onTimesPressed() {
+
+  }
+  onDividedbyPressed() {
+
+  }
+  onEqualPressed() {
+
+  }
 
   render() {
-    const {input} = this.state;
+    const { disptext, result } = this.state;
 
     return (
         <ImageBackground source={require('../calculator/images/bg_image.png')} style={styles.backgroundImage} resizeMode="cover">
             <View style={styles.bgmask}></View>
-            <Text styles={styles.formula}/>
-            <TextInput style={styles.inputarea}
-                onChangeText={ (input) => { this.setState({input}) } }
-                autoCorrect={false}
-                value={input}
-            />
-            <Button style={styles.button} onPress={() => this._handlePress()}>1</Button>
+            <View style={styles.textRawGroup}>
+              <Text style={styles.formula}>{disptext}</Text>
+              <Text style={styles.result}>{result}</Text>
+            </View>
+            <View style={styles.buttonRawGroup}>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('1')}>1</Button>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('2')}>2</Button>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('3')}>3</Button>
+              <Button style={styles.numberbuttonRE} onPress={() => this.onPlusPressed()}>+</Button>
+            </View>
+            <View style={styles.buttonRawGroup}>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('4')}>4</Button>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('5')}>5</Button>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('6')}>6</Button>
+              <Button style={styles.numberbuttonRE} onPress={() => this.onMinusPressed()}>-</Button>
+            </View>
+            <View style={styles.buttonRawGroup}>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('7')}>7</Button>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('8')}>8</Button>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('9')}>9</Button>
+              <Button style={styles.numberbuttonRE} onPress={() => this.onTimesPressed()}>x</Button>
+            </View>
+            <View style={styles.buttonRawGroup}>
+              <Button style={styles.zerobutton} onPress={() => this.onPressed('0')}>0</Button>
+              <Button style={styles.numberbutton} onPress={() => this.onEqualPressed()}>=</Button>
+              <Button style={styles.numberbuttonRE} onPress={() => this.onDividedbyPressed()}>/</Button>
+            </View>
         </ImageBackground>
     );
   }
@@ -97,23 +157,60 @@ const styles = StyleSheet.create({
     margin: 10,
     color: '#FFFFFF',
   },
-  inputarea: {
-    justifyContent: 'center',
-    alignContent: 'flex-start',
-    marginBottom: 10,
+  textRawGroup: {
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  formula: {
+    marginRight: 10,
     height: 50,
-    width: 320,
+    width: 200,
     color: 'black',
-    letterSpacing: 1,
     fontSize: 20,
+    textShadowColor: 'rgba(248,248,255, 0.4)',
     backgroundColor: 'rgba(248,248,255, 0.4)',
+    borderRadius:10,
+    borderWidth: 1,
+    borderColor: '#fff',
+    overflow: 'hidden',
+  },
+  result: {
+    height: 50,
+    width: 100,
+    color: 'black',
+    fontSize: 20,
+    textShadowColor: 'rgba(248,248,255, 0.4)',
+    backgroundColor: 'rgba(248,248,255, 0.4)',
+    borderRadius:10,
+    borderWidth: 1,
+    borderColor: '#fff',
+    overflow: 'hidden',
+  },
+  buttonRawGroup: {
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  numberbutton: {
+    marginRight: 10,
+    height: 60,
+    width: 70,
+    backgroundColor: '#FF7F50',
+    borderWidth: 0,
     borderRadius: 10,
   },
-  button: {
-    left: 28,
-    height: 80,
-    width: 80,
-    marginTop: 10,
+  numberbuttonRE: {
+    height: 60,
+    width: 70,
+    backgroundColor: '#FF7F50',
+    borderWidth: 0,
+    borderRadius: 10,
+  },
+  zerobutton: {
+    marginRight: 10,
+    height: 60,
+    width: 150,
     backgroundColor: '#FF7F50',
     borderWidth: 0,
     borderRadius: 10,
