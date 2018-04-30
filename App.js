@@ -23,114 +23,113 @@ export default class App extends Component {
 
     this.state = {
       formulaarray: [],
-      countnumber: '0',
-
-      disptext: '0',
-      realnumber: 0,
-      result: 0,
+      countnumber: '',
+      sum: 0,
     }
+    this.calculatorarray = [];
   }
 
   onPressed(input) {
-    console.log('Pressed!');
-    //
-    // if(typeof input == "number") {
-    //   countnumber = countnumber+String(input);
-    // } else {
-    //   realnumber = parseInt(countnumber, 10);
-    //   countnumber = '0';
-    // }
-    var newText = this.state.countnumber;
-    if(newText == '0') {
-      newText = input;
-    } else {
-      newText = newText+input;
+    console.log('onPressed!!!');
+
+    let formula = this.state.formulaarray;
+    let number = this.state.countnumber;
+    let result = this.state.sum;
+
+    switch (input) {
+      case '=':
+      case '+':
+      case '-':
+      case 'x':
+      case '/':
+        formula.push(number);
+        formula.push(input);
+
+        if(this.calculatorarray.length < 2) {
+          this.calculatorarray.push(number);
+          this.calculatorarray.push(input);
+        } else {  //this.calculatorarray.length >= 2
+          result = this.calculator(Number(number));
+          this.calculatorarray[0] = result.toString();
+          this.calculatorarray[1] = input;
+        }
+        number = '';
+        result = (input == '=') ? result : 0;
+        break;
+
+      default: //numbers
+        console.log('number: '+input);
+        if(number.length < 10) {
+          number = number+input;
+        }
+        break;
     }
-
-    // switch (input) {
-    //   case '=':
-    //     var sum = 0;
-    //     for(var i = 0; i<=formulaarray.length; i++) {
-    //       if(i%2! != 0) {
-    //
-    //       }
-    //       let number = Number(formulaarray[i]);
-    //       sum = sum+number;
-    //     }
-    //     break;
-    //   case '+', '-', '*', '/':
-    //     formulaarray.push(countnumber);
-    //     formulaarray.push(input);
-    //     countnumber = '0';
-    //     break;
-    //   default: //numbers
-    //
-    //     break;
-    // }
-    //
-    // var newText = this.state.formulaarray.toString();
-    // // newText = (newText == '0') ? input : newText+input;
-    this.setState({countnumber: newText, disptext: newText});
+    this.setState({formulaarray: formula, countnumber: number, sum: result});
   }
 
-  onPlusPressed() {
-    //計算更新
-    let number = Number(this.state.countnumber);
-    let sum = this.state.result+number;
-    this.setState({result: sum});
-    //顯示更新
-    var newText = this.state.disptext+'+';
-    this.setState({countnumber: '0', disptext: newText});
+  calculator(number) {
+    let basenumber = Number(this.calculatorarray[0]);
+    let result = 0;
 
-    // formulaarray.push(countnumber);
-    // formulaarray.push(input);
-    // countnumber = '0';
+    switch (this.calculatorarray[1]) {
+      case '+':
+        result = basenumber+number;
+        break;
+      case '-':
+        result = basenumber-number;
+        break;
+      case 'x':
+        result = basenumber*number;
+        break;
+      case '/':
+        result = basenumber/number;
+        break;
+    }
+    return result;
   }
-  onMinusPressed() {
 
-  }
-  onTimesPressed() {
-
-  }
-  onDividedbyPressed() {
-
-  }
-  onEqualPressed() {
-
+  onClearPressed() {
+    this.setState({formulaarray: [], countnumber: '', sum: 0});
+    this.calculatorarray = [];
   }
 
   render() {
-    const { disptext, result } = this.state;
+    const { formulaarray, countnumber, sum } = this.state;
+    let formula = formulaarray.join('');
+    let result = sum.toString();
+    console.log('formula = '+formula+', countnumber = '+countnumber+', sum = '+sum);
 
     return (
-        <ImageBackground source={require('../calculator/images/bg_image.png')} style={styles.backgroundImage} resizeMode="cover">
+        <ImageBackground source={require('./images/bg_image.png')} style={styles.backgroundImage} resizeMode="cover">
             <View style={styles.bgmask}></View>
             <View style={styles.textRawGroup}>
-              <Text style={styles.formula}>{disptext}</Text>
-              <Text style={styles.result}>{result}</Text>
+              <TextInput value={formula} style={styles.formula} editable={false}/>
+              <TextInput value={result} style={styles.sum} editable={false}/>
             </View>
+            <TextInput value={countnumber} style={styles.inputnumber} editable={false}/>
             <View style={styles.buttonRawGroup}>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('1')}>1</Button>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('2')}>2</Button>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('3')}>3</Button>
-              <Button style={styles.numberbuttonRE} onPress={() => this.onPlusPressed()}>+</Button>
+              <Button style={styles.numberbuttonRE} onPress={() => this.onPressed('+')}>+</Button>
             </View>
             <View style={styles.buttonRawGroup}>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('4')}>4</Button>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('5')}>5</Button>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('6')}>6</Button>
-              <Button style={styles.numberbuttonRE} onPress={() => this.onMinusPressed()}>-</Button>
+              <Button style={styles.numberbuttonRE} onPress={() => this.onPressed('-')}>-</Button>
             </View>
             <View style={styles.buttonRawGroup}>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('7')}>7</Button>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('8')}>8</Button>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('9')}>9</Button>
-              <Button style={styles.numberbuttonRE} onPress={() => this.onTimesPressed()}>x</Button>
+              <Button style={styles.numberbuttonRE} onPress={() => this.onPressed('x')}>x</Button>
             </View>
             <View style={styles.buttonRawGroup}>
-              <Button style={styles.zerobutton} onPress={() => this.onPressed('0')}>0</Button>
-              <Button style={styles.numberbutton} onPress={() => this.onEqualPressed()}>=</Button>
-              <Button style={styles.numberbuttonRE} onPress={() => this.onDividedbyPressed()}>/</Button>
+              <Button style={styles.numberbutton} onPress={() => this.onPressed('0')}>0</Button>
+              <Button style={styles.acbutton} onPress={() => this.onClearPressed()}>AC</Button>
+              <Button style={styles.operatorbutton} onPress={() => this.onPressed('=')}>=</Button>
+              <Button style={styles.numberbuttonRE} onPress={() => this.onPressed('/')}>/</Button>
             </View>
         </ImageBackground>
     );
@@ -158,9 +157,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   textRawGroup: {
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   formula: {
     marginRight: 10,
@@ -168,19 +167,30 @@ const styles = StyleSheet.create({
     width: 200,
     color: 'black',
     fontSize: 20,
-    textShadowColor: 'rgba(248,248,255, 0.4)',
     backgroundColor: 'rgba(248,248,255, 0.4)',
     borderRadius:10,
     borderWidth: 1,
     borderColor: '#fff',
     overflow: 'hidden',
   },
-  result: {
+  sum: {
     height: 50,
     width: 100,
     color: 'black',
     fontSize: 20,
-    textShadowColor: 'rgba(248,248,255, 0.4)',
+    backgroundColor: 'rgba(248,248,255, 0.4)',
+    borderRadius:10,
+    borderWidth: 1,
+    borderColor: '#fff',
+    overflow: 'hidden',
+  },
+  inputnumber: {
+    justifyContent: 'center',
+    marginBottom: 20,
+    height: 50,
+    width: 310,
+    color: 'black',
+    fontSize: 20,
     backgroundColor: 'rgba(248,248,255, 0.4)',
     borderRadius:10,
     borderWidth: 1,
@@ -203,16 +213,24 @@ const styles = StyleSheet.create({
   numberbuttonRE: {
     height: 60,
     width: 70,
-    backgroundColor: '#FF7F50',
+    backgroundColor: '#FFD306',
     borderWidth: 0,
     borderRadius: 10,
   },
-  zerobutton: {
+  operatorbutton: {
     marginRight: 10,
     height: 60,
-    width: 150,
-    backgroundColor: '#FF7F50',
+    width: 70,
+    backgroundColor: '#FFD306',
     borderWidth: 0,
     borderRadius: 10,
-  }
+  },
+  acbutton: {
+    marginRight: 10,
+    height: 60,
+    width: 70,
+    backgroundColor: '#00AEAE',
+    borderWidth: 0,
+    borderRadius: 10,
+  },
 });
