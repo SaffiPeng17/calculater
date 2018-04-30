@@ -6,5 +6,6 @@
 
 ## Display
 
-![launch](./images/readme/launch.png)
-![app](./images/readme/appdisp.png)
+| ![launch](./images/readme/launch.png) | ![app](./images/readme/appdisp.png) |
+|---|---|
+| Launch page | App display |
