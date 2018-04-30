@@ -22,19 +22,26 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      formulaarray: [],
+      textArray: [],
       countnumber: '',
       sum: 0,
     }
-    this.calculatorarray = [];
+    this.formulaArray = [];
   }
 
   onPressed(input) {
     console.log('onPressed!!!');
 
-    let formula = this.state.formulaarray;
+    let textarray = this.state.textArray;
     let number = this.state.countnumber;
     let result = this.state.sum;
+
+    if(result != 0) { //clear last calculator data
+      textarray = [];
+      number = '';
+      result = 0;
+      this.formulaArray = [];
+    }
 
     switch (input) {
       case '=':
@@ -42,16 +49,20 @@ export default class App extends Component {
       case '-':
       case 'x':
       case '/':
-        formula.push(number);
-        formula.push(input);
+        //Display formula
+        if(result == 0) {
+          textarray.push(number);
+        }
+        textarray.push(input);
 
-        if(this.calculatorarray.length < 2) {
-          this.calculatorarray.push(number);
-          this.calculatorarray.push(input);
-        } else {  //this.calculatorarray.length >= 2
+        //Calculator
+        if(this.formulaArray.length < 2) {
+          this.formulaArray.push(number);
+          this.formulaArray.push(input);
+        } else {  //this.formulaArray.length >= 2
           result = this.calculator(Number(number));
-          this.calculatorarray[0] = result.toString();
-          this.calculatorarray[1] = input;
+          this.formulaArray[0] = result.toString();
+          this.formulaArray[1] = input;
         }
         number = '';
         result = (input == '=') ? result : 0;
@@ -64,14 +75,14 @@ export default class App extends Component {
         }
         break;
     }
-    this.setState({formulaarray: formula, countnumber: number, sum: result});
+    this.setState({textArray: textarray, countnumber: number, sum: result});
   }
 
   calculator(number) {
-    let basenumber = Number(this.calculatorarray[0]);
+    let basenumber = Number(this.formulaArray[0]);
     let result = 0;
 
-    switch (this.calculatorarray[1]) {
+    switch (this.formulaArray[1]) {
       case '+':
         result = basenumber+number;
         break;
@@ -89,22 +100,22 @@ export default class App extends Component {
   }
 
   onClearPressed() {
-    this.setState({formulaarray: [], countnumber: '', sum: 0});
-    this.calculatorarray = [];
+    this.setState({textArray: [], countnumber: '', sum: 0});
+    this.formulaArray = [];
   }
 
   render() {
-    const { formulaarray, countnumber, sum } = this.state;
-    let formula = formulaarray.join('');
+    const { textArray, countnumber, sum } = this.state;
+    let text = textArray.join('');
     let result = sum.toString();
-    console.log('formula = '+formula+', countnumber = '+countnumber+', sum = '+sum);
+    console.log('text = '+text+', countnumber = '+countnumber+', sum = '+sum);
 
     return (
         <ImageBackground source={require('./images/bg_image.png')} style={styles.backgroundImage} resizeMode="cover">
             <View style={styles.bgmask}></View>
             <View style={styles.textRawGroup}>
-              <TextInput value={formula} style={styles.formula} editable={false}/>
-              <TextInput value={result} style={styles.sum} editable={false}/>
+              <TextInput value={text} style={styles.formulaText} editable={false}/>
+              <TextInput value={result} style={styles.result} editable={false}/>
             </View>
             <TextInput value={countnumber} style={styles.inputnumber} editable={false}/>
             <View style={styles.buttonRawGroup}>
@@ -161,7 +172,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 10,
   },
-  formula: {
+  formulaText: {
     marginRight: 10,
     height: 50,
     width: 200,
@@ -173,7 +184,7 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     overflow: 'hidden',
   },
-  sum: {
+  result: {
     height: 50,
     width: 100,
     color: 'black',
