@@ -30,12 +30,11 @@ export default class App extends Component {
   }
 
   onPressed(input) {
-    console.log('onPressed!!!');
+    console.log('onPressed: '+input);
 
     let textarray = this.state.textArray;
     let number = this.state.countnumber;
     let result = this.state.sum;
-
     if(result != 0) { //clear last calculator data
       textarray = [];
       number = '';
@@ -50,10 +49,22 @@ export default class App extends Component {
       case 'x':
       case '/':
         //Display formula
-        if(result == 0) {
+        if(result == 0 && number) {
           textarray.push(number);
         }
-        textarray.push(input);
+        console.log(textarray[textarray.length-1]);
+        if(['+', '-', 'x', '/'].indexOf(textarray[textarray.length-1]) !== -1) {
+            console.log(textarray[textarray.length-1]);
+            textarray[textarray.length-1] = input;
+        } else {
+            textarray.push(input);
+        }
+        // if(textarray[textarray.length-1] == '+' || textarray[textarray.length-1] == '-' ||
+        //    textarray[textarray.length-1] == 'x' || textarray[textarray.length-1] == '/') {
+        //      textarray[textarray.length-1] = input;
+        // } else {
+        //      textarray.push(input);
+        // }
 
         //Calculator
         if(this.formulaArray.length < 2) {
@@ -113,11 +124,11 @@ export default class App extends Component {
     return (
         <ImageBackground source={require('./images/bg_image.png')} style={styles.backgroundImage} resizeMode="cover">
             <View style={styles.bgmask}></View>
+            <TextInput value={text} style={styles.formulaText} editable={false}/>
             <View style={styles.textRawGroup}>
-              <TextInput value={text} style={styles.formulaText} editable={false}/>
+              <TextInput value={countnumber} style={styles.inputnumber} editable={false}/>
               <TextInput value={result} style={styles.result} editable={false}/>
             </View>
-            <TextInput value={countnumber} style={styles.inputnumber} editable={false}/>
             <View style={styles.buttonRawGroup}>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('1')}>1</Button>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('2')}>2</Button>
@@ -167,12 +178,25 @@ const styles = StyleSheet.create({
     margin: 10,
     color: '#FFFFFF',
   },
+  formulaText: {
+    justifyContent: 'center',
+    marginBottom: 10,
+    height: 50,
+    width: 310,
+    color: 'black',
+    fontSize: 20,
+    backgroundColor: 'rgba(248,248,255, 0.4)',
+    borderRadius:10,
+    borderWidth: 1,
+    borderColor: '#fff',
+    overflow: 'hidden',
+  },
   textRawGroup: {
     justifyContent: 'center',
     flexDirection: 'row',
-    marginBottom: 10,
+    marginBottom: 20,
   },
-  formulaText: {
+  inputnumber: {
     marginRight: 10,
     height: 50,
     width: 200,
@@ -195,23 +219,9 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     overflow: 'hidden',
   },
-  inputnumber: {
-    justifyContent: 'center',
-    marginBottom: 20,
-    height: 50,
-    width: 310,
-    color: 'black',
-    fontSize: 20,
-    backgroundColor: 'rgba(248,248,255, 0.4)',
-    borderRadius:10,
-    borderWidth: 1,
-    borderColor: '#fff',
-    overflow: 'hidden',
-  },
   buttonRawGroup: {
     justifyContent: 'flex-start',
     flexDirection: 'row',
-    marginBottom: 10,
   },
   numberbutton: {
     marginRight: 10,
