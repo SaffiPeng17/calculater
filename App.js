@@ -68,13 +68,20 @@ export default class App extends Component {
 
         //Calculator
         if(this.formulaArray.length < 2) {
-          this.formulaArray.push(number);
+          if(result == 0 && number) {
+            this.formulaArray.push(number);
+          }
+
           this.formulaArray.push(input);
         } else {  //this.formulaArray.length >= 2
           result = this.calculator(Number(number));
-          this.formulaArray[0] = result.toString();
+          if(result == 0 && number) {
+            this.formulaArray[0] = result.toString();
+          }
+
           this.formulaArray[1] = input;
         }
+        console.log('this.formulaArray = '+this.formulaArray);
         number = '';
         result = (input == '=') ? result : 0;
         break;
