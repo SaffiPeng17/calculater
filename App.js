@@ -22,119 +22,96 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      textArray: [],
-      countnumber: '',
-      sum: 0,
-    }
-    this.formulaArray = [];
+      formulaText: '',
+      inputNumber: '',
+      result: 0,
+    };
+    this.cardinalNumber = 0;
+    this.operator = '';
   }
 
   onPressed(input) {
     console.log('onPressed: '+input);
 
-    let textarray = this.state.textArray;
-    let number = this.state.countnumber;
-    let result = this.state.sum;
-    if(result != 0) { //clear last calculator data
-      textarray = [];
-      number = '';
-      result = 0;
-      this.formulaArray = [];
+    let formula = this.state.formulaText;
+    let iNumber = this.state.inputNumber;
+    let sum = this.state.result;
+
+    if(['+', '-', 'x', '/'].indexOf(input) !== -1) {  //input: operators
+      //--Number
+      if(iNumber) {
+        formula = formula+iNumber;
+        this.cardinalNumber = (this.cardinalNumber == 0) ? Number(iNumber) : this.calculator(Number(iNumber));
+        iNumber = '';
+      }
+      //--Operator
+      this.operator = input;
+      //If last input is an operator, remove it before adding a new operator.
+      if(['+', '-', 'x', '/'].indexOf(formula.charAt(formula.length-1)) !== -1) {
+        formula = formula.substring(0, formula.length-1);
+      }
+      formula = formula+input;
+    } else {  //input: number
+      iNumber = iNumber+input;
     }
+    //Update state.
+    this.setState({formulaText: formula, inputNumber: iNumber});
+  }
 
-    switch (input) {
-      case '=':
-      case '+':
-      case '-':
-      case 'x':
-      case '/':
-        //Display formula
-        if(result == 0 && number) {
-          textarray.push(number);
-        }
-        console.log(textarray[textarray.length-1]);
-        if(['+', '-', 'x', '/'].indexOf(textarray[textarray.length-1]) !== -1) {
-            console.log(textarray[textarray.length-1]);
-            textarray[textarray.length-1] = input;
-        } else {
-            textarray.push(input);
-        }
-        // if(textarray[textarray.length-1] == '+' || textarray[textarray.length-1] == '-' ||
-        //    textarray[textarray.length-1] == 'x' || textarray[textarray.length-1] == '/') {
-        //      textarray[textarray.length-1] = input;
-        // } else {
-        //      textarray.push(input);
-        // }
+  onEqualPressed() {
+    let formula = this.state.formulaText;
+    let iNumber = this.state.inputNumber;
 
-        //Calculator
-        if(this.formulaArray.length < 2) {
-          if(result == 0 && number) {
-            this.formulaArray.push(number);
-          }
-
-          this.formulaArray.push(input);
-        } else {  //this.formulaArray.length >= 2
-          result = this.calculator(Number(number));
-          if(result == 0 && number) {
-            this.formulaArray[0] = result.toString();
-          }
-
-          this.formulaArray[1] = input;
-        }
-        console.log('this.formulaArray = '+this.formulaArray);
-        number = '';
-        result = (input == '=') ? result : 0;
-        break;
-
-      default: //numbers
-        console.log('number: '+input);
-        if(number.length < 10) {
-          number = number+input;
-        }
-        break;
+    //Number
+    if(iNumber) {
+      formula = formula+iNumber;
+      this.cardinalNumber = (this.cardinalNumber == 0) ? Number(iNumber) : this.calculator(Number(iNumber));
+      iNumber = '';
     }
-    this.setState({textArray: textarray, countnumber: number, sum: result});
+    //Operator
+    formula = formula+'=';
+
+    this.setState({formulaText: formula, inputNumber: iNumber, result: this.cardinalNumber});
   }
 
   calculator(number) {
-    let basenumber = Number(this.formulaArray[0]);
     let result = 0;
 
-    switch (this.formulaArray[1]) {
+    console.log('cardinalNumber = '+this.cardinalNumber+', this.operator = '+this.operator);
+    switch(this.operator) {
       case '+':
-        result = basenumber+number;
+        result = this.cardinalNumber+number;
         break;
       case '-':
-        result = basenumber-number;
+        result = this.cardinalNumber-number;
         break;
       case 'x':
-        result = basenumber*number;
+        result = this.cardinalNumber*number;
         break;
       case '/':
-        result = basenumber/number;
+        result = this.cardinalNumber/number;
         break;
     }
+    console.log('result = '+result);
     return result;
   }
 
   onClearPressed() {
-    this.setState({textArray: [], countnumber: '', sum: 0});
-    this.formulaArray = [];
+    this.setState({formulaText: '', inputNumber: '', result: 0});
+    this.cardinalNumber = 0;
+    this.operator = '';
   }
 
   render() {
-    const { textArray, countnumber, sum } = this.state;
-    let text = textArray.join('');
-    let result = sum.toString();
-    console.log('text = '+text+', countnumber = '+countnumber+', sum = '+sum);
+    const { formulaText, inputNumber, result } = this.state;
 
     return (
         <ImageBackground source={require('./images/bg_image.png')} style={styles.backgroundImage} resizeMode="cover">
             <View style={styles.bgmask}></View>
-            <TextInput value={text} style={styles.formulaText} editable={false}/>
+            <TextInput value={formulaText} style={styles.formulaText} editable={false}/>
             <View style={styles.textRawGroup}>
-              <TextInput value={countnumber} style={styles.inputnumber} editable={false}/>
-              <TextInput value={result} style={styles.result} editable={false}/>
+              <TextInput value={inputNumber} style={styles.inputnumber} editable={false}/>
+              <TextInput value={result.toString()} style={styles.result} editable={false}/>
             </View>
             <View style={styles.buttonRawGroup}>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('1')}>1</Button>
@@ -157,7 +134,7 @@ export default class App extends Component {
             <View style={styles.buttonRawGroup}>
               <Button style={styles.numberbutton} onPress={() => this.onPressed('0')}>0</Button>
               <Button style={styles.acbutton} onPress={() => this.onClearPressed()}>AC</Button>
-              <Button style={styles.operatorbutton} onPress={() => this.onPressed('=')}>=</Button>
+              <Button style={styles.operatorbutton} onPress={() => this.onEqualPressed()}>=</Button>
               <Button style={styles.numberbuttonRE} onPress={() => this.onPressed('/')}>/</Button>
             </View>
         </ImageBackground>
