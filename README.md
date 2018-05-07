@@ -4,7 +4,7 @@
 
 *And the learning note is here: [React-Native Notes](https://saffipeng17.gitbooks.io/react-native-notes/content/).*
 
-## Display
+## Display - iOS
 
 | ![launch](./images/readme/launch.png) | ![app](./images/readme/appdisp.png) | ![app](./images/readme/calculator.gif) |
 |---|---|---|
