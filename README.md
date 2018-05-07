@@ -7,5 +7,5 @@
 ## Display
 
 | ![launch](./images/readme/launch.png) | ![app](./images/readme/appdisp.png) | ![app](./images/readme/calculator.gif) |
-|---|---|
+|---|---|---|
 | **Launch page** | **App Main page** | **App Display** |
